@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+var BBPlug = {};
+BBPlug.BaseView = Backbone.View.extend({
+ initialize: function() { this.scope = 'based'; } 
+    , render: function(){
+            debugger;
+            var data;
+            if (this.serializeData){ data = this.serializeData(); };
+            var renderedHtml = _.template(this.template, data);
+            this.$el.html(renderedHtml);
+            console.log(this.$el.html());
+        }
+});
+
+
+View = BBPlug.BaseView.extend({
+    initialize: function() { this.scope = 'extended' } 
+    , template: "<% console.log(arguments[0]) %>"
+    , serializeData: function(){ return this.scope; }
+    , render: function(){
+            debugger;
+            BBPlug.BaseView.prototype.render.call(this);
+            return this;
+        }
+});
+
+v = new View();
+
+
+</script>
+</body>
+</html>

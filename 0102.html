@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+Backbone.View.extend({
+	render: function(){
+		var template = "<h1><%  _.each(items, function(item){ %><%= message %> <% }) %>!</h1>";
+		var data = {items: this.collection.toJSON()};
+		var renderedHtml = _.template(template, data);
+		this.$el.html(renderedHtml);
+	}
+});
+
+
+</script>
+</body>
+</html>

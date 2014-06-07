@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<!-- <script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script> -->
+<script src="./backbone-1.1.1-modified.js"></script>
+<script src="http://localhost:8001/js/lib/moment-timezone.js"></script>
+<script>
+
+var BBPlug = {};
+BBPlug.BaseView = Backbone.View.extend({
+      initialize: function() { 
+        console.log('in baseview initialize');
+        this.scope = 'based'; 
+      } 
+    , render: function(){
+            debugger;
+            var data;
+            if (this.serializeData){ 
+                data = this.serializeData(); 
+                };
+            debugger;    
+            var renderedHtml = _.template(this.template, data);
+            this.$el.html(renderedHtml);
+            console.log(this.$el.html());
+            
+            // Call the `onRender` method if it exists
+            if (this.onRender){ this.onRender();  }            
+            
+        }
+});
+
+
+View = BBPlug.BaseView.extend({
+    initialize: function() { 
+    
+        this.scope = 'extended';
+        console.log('in extended initialize');
+        } 
+    , template: "<% debugger; console.log(arguments[0]) %>"
+    , serializeData: function(){ 
+        var data;
+        if (this.model) {
+            data = this.model.toJSON();
+        }
+        if (this.collection) {
+            data = this.collection.toJSON()
+        }
+        return data;
+    }
+    , onRender: function() {
+        debugger;
+        console.log('this.$el.html()', this.$el.html() );    
+
+    }
+});
+
+var models = [];
+for (var i=1; i <= 5; i++) { models.push( new (Backbone.Model.extend())({ a: 'a'+i.toString()}) ) };
+var col1 = new (Backbone.Collection.extend())(models);
+var v1 = new View({collection: col1})
+v1.render();
+ 
+
+
+
+
+</script>
+</body>
+</html>

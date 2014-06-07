@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+CollectionView = Backbone.View.extend({
+
+	render: function(){
+		var data = {items: this.collection.toJSON()};
+		var renderedHtml = _.template("<h1><% _.each(items, function(item){ %><%= message %> <% }) %>!</h1>", data);
+		this.$el.html(renderedHtml);
+	}
+
+ });
+
+ var collection = new Backbone.Collection([
+	 {message: "Hello"},
+	 {message: "Collection"},
+	 {message: "Driven"},
+	 {message: "World"}
+ ]);
+
+ var view = new DataDrivenView({collection: collection});
+
+ view.render();
+
+ console.log(view.$el); //=> "[<h1>Hello Collection Driven World!</h1>]"
+
+
+</script>
+</body>
+</html>

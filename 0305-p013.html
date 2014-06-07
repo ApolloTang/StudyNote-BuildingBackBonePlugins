@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script src="http://localhost:8001/js/lib/moment-timezone.js"></script>
+<script>
+
+var BBPlug = {};
+BBPlug.BaseView = Backbone.View.extend({
+    render: function(){
+            debugger;
+            var data;
+            if (this.serializeData){ data = this.serializeData(); };
+            var renderedHtml = _.template(this.template, data);
+            this.$el.html(renderedHtml);
+            console.log(this.$el.html());
+            
+            // Call the `onRender` method if it exists
+            if (this.onRender){ this.onRender();  }
+        }
+});
+
+
+CommentView = BBPlug.BaseView.extend({
+    template: "<% console.log(arguments[0]) %>",
+    serializeData: function(){ },
+    onRender: function() {
+        
+        // call moment.js' to format our dates correctly
+        var commentDate = this.model.get("date");
+        var timeAgo = moment(commentDate).fromNow();
+        
+        // update this view's DOM with the correct format
+        this.$(".comment-date").text(timeAgo);
+    }
+});
+
+</script>
+</body>
+</html>

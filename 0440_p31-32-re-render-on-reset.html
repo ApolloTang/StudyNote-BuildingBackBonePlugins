@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<!-- <script src="./backbone-1.1.1-modified.js"></script> -->
+<script src="http://localhost:8001/js/lib/moment-timezone.js"></script>
+<script>
+
+var BBPlug = {};
+BBPlug.BaseView = Backbone.View.extend({
+	render: function(){
+			var data;
+			if (this.serializeData){data = this.serializeData();};
+			var renderedHtml = _.template(this.template, data);
+			this.$el.html(renderedHtml);
+			if (this.onRender){ this.onRender();}
+			return this;
+		}
+});
+
+BBPlug.ModelView = BBPlug.BaseView.extend({
+    serializeData: function(){ 
+        var data;
+        if (this.model) { data = this.model.toJSON(); }
+        return data;
+    }
+});
+
+BBPlug.CollectionView = BBPlug.BaseView.extend({
+    constructor: function(options) {
+        BBPlug.BaseView.call(this, options);
+        this.children = {};         // set up storage for item view in this collection
+        this.listenTo( this.collection, "add"   , this.modelAdded   );
+        this.listenTo( this.collection, "remove", this.modelRemoved );
+        this.listenTo( this.collection, "reset" , this.render       );   /// <--- [** see book **]
+    }
+    , getModelView: function(model){ return this.modelView; }
+    , modelAdded: function( model ) {  
+        console.log('a model has been added');
+        var viewOfModelAdded = this.renderOneModel( model );
+        this.$el.append(viewOfModelAdded.$el);  
+    }
+    , modelRemoved: function(model) {
+        console.log('a model has been removed ');
+        if (!model){ return; }
+        var view = this.children[model.cid];
+        this.closeChildView(view);
+    }
+    // a method to close an individual view
+    , closeChildView: function(view){
+        if (!view){ return; }
+        if (_.isFunction(view.remove)){ view.remove(); }
+        this.children[view.model.cid] = undefined;
+    }
+    , closeChildren: function(){
+        var children = this.children || {}
+        _.each(children, function(view){
+            this.closeChildView(view);
+        }, this);
+    }
+    , remove: function(){
+                        console.log('before prototype.remove.call(this), $MyDiv.html(): ', $MyDiv.html());
+        BBPlug.BaseView.prototype.remove.call(this);
+                        console.log('after prototype.remove.call(this), $MyDiv.html(): ', $MyDiv.html());
+        
+                        console.log('before closeChildren(), this.children: ', this.children);
+        this.closeChildren();
+                        console.log('after closeChildren(), this.children: ', this.children);
+    }
+    , renderOneModel: function (item) {
+		var ViewType = this.getModelView();
+        var view = new ViewType({model: item});       
+        this.children[item.cid] = view;
+        console.log('render one model: ',  $('<div>').html(view.render().$el).html() );
+        return view;
+    } 
+    , render: function(){
+        var html = [];
+        this.closeChildren();      /// <------------------ [** see book **]        
+        this.collection.each(function(item){
+           var view = this.renderOneModel(item);
+           html.push(view.render().el);
+        } , this);       
+        this.$el.html(html)                               
+        return this 
+      }
+    , serializeData: function(){ 
+        var data;
+        if (this.collection) { data = this.collection.toJSON() }
+        return data;
+    }
+});
+
+
+View_model = BBPlug.ModelView.extend({
+     tagName : 'li'
+   , template: "<%= a %>"
+});
+
+View_collection = BBPlug.CollectionView.extend({
+     tagName : 'ul'
+  ,  modelView: View_model   
+});
+
+
+var $MyDiv = $('<div>');
+
+var models = [];
+var M = Backbone.Model.extend();
+for (var i=1; i <= 2; i++) { models.push( new M({ a: 'a'+i.toString()}) ) };
+var col1 = new (Backbone.Collection.extend())(models);
+var v1_col = new View_collection({collection: col1});
+
+
+//v1_col.render();
+console.log('render collection: ',    $('<div>').html(v1_col.render().$el).html() );
+console.log(Object.keys(v1_col.children));
+_.each(v1_col.children, function(view, key){ console.log(key+': '+view.$el.html()); });
+
+console.log('- - - -  add a model to collection to fire listenTo "add" event- - - -'); 
+
+models.push( new M({ a: 'a3'}) );
+col1.add(_.last(models));
+console.log('render collection: ',     $MyDiv.html(v1_col.render().$el).html() );
+
+console.log(Object.keys(v1_col.children));
+_.each(v1_col.children, function(view, key){ console.log(key+': '+view.$el.html()); });
+
+
+console.log("- - - -  remove a model from collection: col1.remove('c2')- - - -"); 
+
+col1.remove('c2');
+console.log('render collection: ',    $MyDiv.html(v1_col.render().$el).html() );
+
+console.log(Object.keys(v1_col.children));
+_.each(v1_col.children, function(view, key){ 
+
+try {
+console.log(key+': '+view.$el.html()); 
+} catch(e) {
+console.log(key+' has no value');
+}
+
+
+});
+
+ 
+
+console.log("- - - -  calling v1_col.remove()  - - - -"); 
+
+
+ v1_col.remove();
+
+ 
+
+/*
+
+            try {         console.log('before remove, $MyDiv.html(): ', $MyDiv.html());
+            } catch(e) {  console.log('before remove,  $MyDiv.html(): ', 'does not exist');  }
+
+            try {         console.log('after remove, $MyDiv.html(): ', $MyDiv.html());
+            } catch(e) {  console.log('after remove, $MyDiv.html(): ', 'does not exist');   }
+*/
+</script>
+</body>
+</html>

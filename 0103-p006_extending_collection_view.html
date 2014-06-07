@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>0103-p006_extending_collection_view.html</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+BaseView = Backbone.View.extend({
+render: function(){
+		var data;
+		if (this.serializeData){ 
+			data = this.serializeData();
+		};
+
+		var renderedHtml = _.template(this.template, data);
+		this.$el.html(renderedHtml);
+		return this
+	}
+});
+
+
+CollectionView = BaseView.extend({ 
+	template: "<h1><%                                  \
+						_.each(  items                 \
+							   , function(item){       \
+	               %>        		<%= item.a %>      \
+	               <%            })  			       \
+				   %></h1>"
+   , serializeData: function(){	
+		return { items: this.collection.toJSON() }; 
+	}
+});
+
+C = Backbone.Collection.extend();
+c1 = new C([{ a:'a1'},{ a:'a2'},{ a:'a3'}]);
+v1 = new CollectionView({collection:c1});
+
+console.log(v1.render().$el.html().replace(/\s+/ig, " "));
+
+</script>
+</body>
+</html>

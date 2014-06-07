@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+var BBPlug = {};
+
+BBPlug.BaseView = Backbone.View.extend({
+
+    render: function(){
+            var data;
+
+            if (this.serializeData){
+                data = this.serializeData();
+            };
+
+            var renderedHtml = _.template(this.template, data);
+            this.$el.html(renderedHtml);
+        }
+});
+
+
+HelloWorldView = BBPlug.BaseView.extend({template: "<h1>Hello world!</h1>"});
+
+DataDrivenView = BBPlug.BaseView.extend({
+        template: "<h1><%= message %></h1>",
+        serializeData: function(){ return this.model.toJSON();  }
+    });
+
+CollectionView = BBPlug.BaseView.extend({
+    template: "<h1><% _.each(items, function(item){ %><%= message %> <% } %>!</h1>",
+    serializeData: function(){ return { items: this.collection.toJSON() };    }
+});
+
+</script>
+</body>
+</html>
