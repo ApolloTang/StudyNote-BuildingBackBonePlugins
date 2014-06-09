@@ -26,8 +26,7 @@ BBPlug.BaseView = Backbone.View.extend({
 
 
 BBPlug.ModelView = BBPlug.BaseView.extend({
-    
-serializeData: function(){ 
+    serializeData: function(){ 
         var data;
         if (this.model) { data = this.model.toJSON(); }
         return data;
