@@ -37,6 +37,20 @@ var BBPlug = {};
 */
 
 
+/*  
+    Accessing protoype in Backbone View:
+        
+        There are two way to do this.
+            1. var proto = Backbone.View.protorype
+            2. var proto = Object.getProtoypeOf(this)
+            
+        using the 2nd one because you don't need to know what "X" is in:
+            var proto = Backbone.X.prototype
+        
+         
+*/
+
+
 BBPlug.BaseView = Backbone.View.extend({
  
     
