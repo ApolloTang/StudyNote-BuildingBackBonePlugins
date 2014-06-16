@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+// automationid.js
+(function(){
+    // @@ This closure can be found at:
+    // @@ window.Backbone.View.protorype.constructor.<function scope>.Closure
+    // @@ and I have no idea how it gets there.
+    
+    // store a reference to the original constructor function
+    var originalConstructor = Backbone.View.prototype.constructor;
+
+
+    var automationidCounter = 0;
+    // create a function that can return a unique, repeatable id
+    function getAutomationId(view){
+
+        // do something here to get a unique, yet repeatable id
+
+        // based on the view instance that is passed in. send it
+        // back as a return value
+        var id = ++automationidCounter + '';
+
+        return id;
+    }
+
+    // override the View's constructor
+    Backbone.View.prototype.constructor = function(options){
+
+        // call the original constructor function with
+        // the options provided to this instance
+        originalConstructor.call(this, options);
+
+        // set the automation id on the
+        var automationId = getAutomationId(this);
+        this.$el.data("automation-id", automationId);
+
+        // log a message, saying the automation-id is set
+        console.log("Automation ID set: ", automationId, view);
+    };
+
+})();
+
+(function(){
+
+    var V = BBPlug.ModelView.extend({
+        template: "#model-template"
+    });
+
+    $(function(){
+        var v = new V();
+        v.render();
+         $("#main").html(v.$el);
+     });
+
+ })();
+
+
+debugger;
+</script>
+</body>
+</html>
