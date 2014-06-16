@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+
+<script id="#child-template" type="text/html">
+    <h2>I'm a child view!</h2>
+</script>
+
+<script id="parent-template" type="text/html">
+    <h1>I'm the parent view!</h1>
+    <div class="child-container"></div>
+</script>
+
+
+
+
+
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+
+var BBPlug = {};
+BBPlug.BaseView = Backbone.View.extend({
+	render: function(){
+		var data;
+		if (this.serializeData){data = this.serializeData();};
+		debugger;
+		var renderedHtml = _.template(this.template, data);
+		this.$el.html(renderedHtml);
+		if (this.onRender){ this.onRender();}
+		return this;
+	}
+});
+
+BBPlug.ModelView = BBPlug.BaseView.extend({
+	initialize: function() {
+		debugger;
+	},
+	serializeData: function(){ 
+		var data;
+		if (this.model) { data = this.model.toJSON(); }
+		return data;
+	}
+});
+
+var ChildView = BBPlug.ModelView.extend({
+    template: "#child-template"
+});
+
+var ParentView = BBPlug.ModelView.extend({
+////initialize: function(){
+////	debugger;
+////},
+	template: "#parent-template",
+	onRender: function(){
+		debugger;
+		// store the child in the parent view
+		this.child = new ChildView();
+		this.child.render();
+		this.$("#child-container").html(this.child.$el);
+	},
+	onClose: function() {
+		// close the child when this parent is closed
+		if (this.child) {
+			this.child.close()	
+		}
+	}	
+	
+});
+debugger;
+var parent = new ParentView();
+//parent.render();
+//$("body").html(parent.$el);
+
+
+
+
+
+debugger;
+</script>
+</body>
+</html>
+

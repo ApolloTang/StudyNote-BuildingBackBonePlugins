@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+// Define a re-usable "Region" object
+var Region = (function (Backbone, $) {
+	var el = "#mainregion";
+	var currentView;
+	var region = {};
+
+	// A method to close the current view
+	var closeView = function (view) {
+			if (view && view.remove) {
+			view.remove();
+		}
+	};
+
+	// A method to render and show a new view
+	var openView = function (view) {
+		view.render();
+		$(el).html(view.el);
+	};
+
+	// Export the API to show a view and
+	// close an existing view, if one is
+	// already in this DOM element
+	region.show = function (view) {
+		closeView(currentView);
+		currentView = view;
+		openView(currentView);
+	};
+
+	return region;
+})(Backbone, jQuery);
+
+debugger;
+</script>
+</body>
+</html>
+

@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>??Title??</title>
+</head>
+<body>
+<script src="http://localhost:8001/js/lib/jquery-1.11.0.js"></script>
+<script src="http://localhost:8001/js/lib/underscore-1.4.4.js"></script>
+<script src="http://localhost:8001/js/lib/backbone-1.1.1.js"></script>
+<script>
+
+// Define a re-usable "Region" object
+var Region = (function (Backbone, $) {
+
+	// Define the Region constructor function
+	// accept an object parameter with an `el`
+	// to define the element to manage
+	function R(options){
+		this.el = options.el;
+		this.currentView = undefined;
+	};
+
+	// extend the Region with the correct methods
+	_.extend(R.prototype, {
+		// A method to close the current view
+		closeView: function (view) {
+			if (view && view.remove) { view.remove(); }
+		},
+		// A method to render and show a new view
+		openView: function (view) {
+			this.ensureEl();
+			view.render();
+			this.$el.html(view.el);
+		},
+		// ensure the element is available the
+		// first time it is used. cache it after that
+		ensureEl: function(){
+			if (this.$el){ return; }
+			this.$el = $(this.el);
+		},
+		// show a view and close an existing view,
+		// if one is already in this DOM element
+		show: function (view) {
+			this.closeView(this.currentView);
+			this.currentView = view;
+			this.openView(view);
+			
+			// run the onShow method if it is found
+			if (_.isFunction(view.onShow)){
+				view.onShow();
+			}	
+		}
+	});
+	// export the Region type so it can be used
+	return R;
+})(Backbone, jQuery);
+
+var mainRegion = new Region({
+	el: "#mainregion"
+});
+
+
+
+debugger;
+</script>
+</body>
+</html>
+
